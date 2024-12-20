@@ -58,4 +58,5 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation("androidx.compose.ui:ui-text-google-fonts:1.7.5")
     implementation("com.google.android.gms:play-services-basement:18.5.0")
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
 }
