@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
@@ -31,7 +30,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -49,11 +47,9 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.preferencesDataStore
 import com.example.alcoolougasolina.ui.theme.AlcoolOuGasolinaTheme
-import com.example.alcoolougasolina.ui.theme.CreamPink
 import com.example.alcoolougasolina.ui.theme.LightGray
 import com.example.alcoolougasolina.ui.theme.LightGreen
 import com.example.alcoolougasolina.ui.theme.LightPink
-import com.example.alcoolougasolina.ui.theme.Pink80
 import com.example.alcoolougasolina.ui.theme.TruePink
 import com.example.alcoolougasolina.ui.theme.patuaFont
 import kotlinx.coroutines.CoroutineScope
@@ -84,7 +80,7 @@ class MainActivity : ComponentActivity() {
 
 
 
-fun calcularMelhorOpcao(gasolina: String, alcool: String, percentage: Double): String {
+fun calculateBestChoice(gasolina: String, alcool: String, percentage: Double): String {
     val gasolinaValor = gasolina.replace(",", ".").toDoubleOrNull()
     val alcoolValor = alcool.replace(",", ".").toDoubleOrNull()
 
@@ -111,7 +107,7 @@ suspend fun getSwitchState(context: Context): Boolean {
         .first()
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+
 @Composable
 fun Screen(modifier: Modifier = Modifier, context: Context? = null)
     {
@@ -125,7 +121,7 @@ fun Screen(modifier: Modifier = Modifier, context: Context? = null)
 
     LaunchedEffect(Unit) {
         context?.let {
-            checked = getSwitchState(it)  // 'it' é o contexto não nulo
+            checked = getSwitchState(it)
         }
     }
 
@@ -175,10 +171,10 @@ fun Screen(modifier: Modifier = Modifier, context: Context? = null)
         Column(
             modifier = Modifier
                 .fillMaxWidth(0.9f)
-                .fillMaxHeight(0.75f)
+                .fillMaxHeight(0.8f)
                 .padding(16.dp)
-                .clip(RoundedCornerShape(16.dp))  // Borda arredondada
-                .background(secondaryColor)      // Cor de fundo
+                .clip(RoundedCornerShape(16.dp))
+                .background(secondaryColor)
                 .padding(16.dp),
              verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
@@ -194,9 +190,10 @@ fun Screen(modifier: Modifier = Modifier, context: Context? = null)
                 label = { Text("$") },
                 modifier = Modifier.fillMaxWidth().border(1.dp, tertiaryColor, RoundedCornerShape(8.dp)),
                 singleLine = true,
+                textStyle = TextStyle(color = tertiaryColor),
                 colors = TextFieldDefaults.colors(
-                    focusedContainerColor = LightGreen, // Cor da borda quando o campo estiver focado
-                    unfocusedContainerColor = LightGray, // Cor da borda quando o campo não estiver focad
+                    focusedContainerColor = LightGreen,
+                    unfocusedContainerColor = LightGray,
                 )
             )
 
@@ -212,6 +209,7 @@ fun Screen(modifier: Modifier = Modifier, context: Context? = null)
                 label = { Text("$") },
                 modifier = Modifier.fillMaxWidth().border(1.dp, tertiaryColor, RoundedCornerShape(8.dp)),
                 singleLine = true,
+                textStyle = TextStyle(color = tertiaryColor),
                 colors = TextFieldDefaults.colors(
                     focusedContainerColor = LightGreen,
                     unfocusedContainerColor = LightGray
@@ -251,7 +249,7 @@ fun Screen(modifier: Modifier = Modifier, context: Context? = null)
                 Button(
                     onClick = {
                         val percentage = if (checked) 0.75 else 0.70
-                        resultado = calcularMelhorOpcao(gasolinePrice, alcoholPrice, percentage)
+                        resultado = calculateBestChoice(gasolinePrice, alcoholPrice, percentage)
                     },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.primary,
@@ -267,7 +265,7 @@ fun Screen(modifier: Modifier = Modifier, context: Context? = null)
                         style = MaterialTheme.typography.bodyLarge,
                         fontFamily = patuaFont,
                         color = TruePink,
-                        modifier = Modifier.padding(start = 16.dp)
+                        modifier = Modifier.fillMaxWidth().padding(start = 16.dp)
                     )
                 }
             }

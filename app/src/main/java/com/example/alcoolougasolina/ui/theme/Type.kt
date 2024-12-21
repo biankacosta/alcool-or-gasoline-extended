@@ -13,7 +13,6 @@ val patuaFont = FontFamily(
     Font(R.font.patua_one_regular, FontWeight.Normal)
 )
 
-// Set of Material typography styles to start with
 val Typography = Typography(
     bodyLarge = TextStyle(
         fontFamily = FontFamily.Default,
