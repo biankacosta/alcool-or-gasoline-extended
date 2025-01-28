@@ -8,6 +8,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -107,12 +108,32 @@ suspend fun getSwitchState(context: Context): Boolean {
         .first()
 }
 
+@Composable
+fun ThemedImage() {
+    val isDarkTheme = isSystemInDarkTheme()
+    val imageRes = if (isDarkTheme) {
+        R.drawable.bomba_de_combustivel_light // Imagem para tema escuro
+    } else {
+        R.drawable.bomba_de_combustivel_dark // Imagem para tema claro
+    }
+
+    Image(
+        painter = painterResource(id = imageRes),
+        contentDescription = "Bomba de Gasolina",
+        modifier = Modifier
+            .size(70.dp)
+            .padding(bottom = 8.dp),
+        contentScale = ContentScale.Crop
+    )
+}
+
 
 @Composable
 fun Screen(modifier: Modifier = Modifier, context: Context? = null)
     {
     val secondaryColor = MaterialTheme.colorScheme.secondary
     val tertiaryColor = MaterialTheme.colorScheme.tertiary
+    val primaryContainerColor = MaterialTheme.colorScheme.primaryContainer
 
     var gasolinePrice by rememberSaveable { mutableStateOf("") }
     var alcoholPrice by rememberSaveable { mutableStateOf("") }
@@ -135,15 +156,7 @@ fun Screen(modifier: Modifier = Modifier, context: Context? = null)
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.Bottom
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.bomba_de_combustivel),
-                contentDescription = "Bomba de Gasolina",
-                modifier = Modifier
-                    .size(70.dp)
-                    .padding(bottom = 8.dp),
-                contentScale = ContentScale.Crop
-
-            )
+            ThemedImage()
             Column(
                 modifier = Modifier.padding(7.dp)
             ) {
@@ -151,7 +164,7 @@ fun Screen(modifier: Modifier = Modifier, context: Context? = null)
                     text = "ÁLCOOL",
                     style = MaterialTheme.typography.titleLarge.copy(
                         brush = Brush.linearGradient(
-                            colors = listOf(TruePink, LightPink)
+                            colors = listOf(MaterialTheme.colorScheme.secondaryContainer, MaterialTheme.colorScheme.tertiaryContainer)
                         )
                     )
                 )
@@ -160,7 +173,7 @@ fun Screen(modifier: Modifier = Modifier, context: Context? = null)
                     text = "ou gasolina",
                     style = MaterialTheme.typography.titleLarge.copy(
                         brush = Brush.linearGradient(
-                            colors = listOf(TruePink, LightPink)
+                            colors = listOf(MaterialTheme.colorScheme.secondaryContainer, MaterialTheme.colorScheme.tertiaryContainer)
                         ),
                         fontSize = 24.sp
                     )
@@ -187,10 +200,15 @@ fun Screen(modifier: Modifier = Modifier, context: Context? = null)
             TextField(
                 value = gasolinePrice,
                 onValueChange = { newText -> gasolinePrice = newText },
-                label = { Text("$") },
                 modifier = Modifier.fillMaxWidth().border(1.dp, tertiaryColor, RoundedCornerShape(8.dp)),
                 singleLine = true,
-                textStyle = TextStyle(color = tertiaryColor),
+                textStyle = TextStyle(color = MaterialTheme.colorScheme.primaryContainer),
+                placeholder = {
+                    Text(
+                        text = "Digite o preço da gasolina",
+                        color = Color(android.graphics.Color.parseColor("#696374"))
+                    )
+                },
                 colors = TextFieldDefaults.colors(
                     focusedContainerColor = LightGreen,
                     unfocusedContainerColor = LightGray,
@@ -206,13 +224,18 @@ fun Screen(modifier: Modifier = Modifier, context: Context? = null)
             TextField(
                 value = alcoholPrice,
                 onValueChange = { newText -> alcoholPrice = newText },
-                label = { Text("$") },
                 modifier = Modifier.fillMaxWidth().border(1.dp, tertiaryColor, RoundedCornerShape(8.dp)),
                 singleLine = true,
-                textStyle = TextStyle(color = tertiaryColor),
+                textStyle = TextStyle(color = MaterialTheme.colorScheme.primaryContainer),
+                placeholder = {
+                    Text(
+                        text = "Digite o preço do álcool",
+                        color = Color(android.graphics.Color.parseColor("#696374"))
+                    )
+                },
                 colors = TextFieldDefaults.colors(
                     focusedContainerColor = LightGreen,
-                    unfocusedContainerColor = LightGray
+                    unfocusedContainerColor = LightGray,
                 )
             )
 
@@ -252,7 +275,7 @@ fun Screen(modifier: Modifier = Modifier, context: Context? = null)
                         resultado = calculateBestChoice(gasolinePrice, alcoholPrice, percentage)
                     },
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
+                        containerColor = MaterialTheme.colorScheme.primaryContainer,
                         contentColor = Color.White
                     )
                 ) {
