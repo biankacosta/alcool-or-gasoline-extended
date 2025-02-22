@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Alcohol Or Gasoline</string>
+    <string name="drawer_list">List</string>
+    <string name="drawer_calculate">Calculate</string>
+    <string name="best_choice_alcohol">Alcohol is the best choice!\n</string>
+    <string name="best_choice_gasoline">Gasoline is the best choice!</string>
+    <string name="insert_valid_values">Please enter valid values.</string>
+    <string name="gas_pump_description">Gas Pump</string>
+    <string name="alcohol_title_app">ALCOHOL</string>
+    <string name="or_gasoline_title_app">or gasoline</string>
+    <string name="gasoline_price">Gasoline Price</string>
+    <string name="enter_gasoline_price">Enter the gasoline price</string>
+    <string name="alcohol_price">Alcohol Price</string>
+    <string name="enter_alcohol_price">Enter the alcohol price</string>
+    <string name="performance_question">Is your car\'s alcohol performance 75%?</string>
+    <string name="calculate_button">Calculate Best Option</string>
+    <string name="drawer_add_station">Save Gas Station</string>
+    <string name="calculate_name">Calculate</string>
+    <string name="gas_station_name">Gas Station Name</string>
+    <string name="enter_station_name">(Optional)</string>
+    <string name="save_station_button">Save Gas Station</string>
+    <string name="list_name">Gas Station List</string>
+</resources>

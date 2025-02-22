@@ -1,3 +1,24 @@
 <resources>
     <string name="app_name">Álcool Ou Gasolina</string>
+    <string name="drawer_list">Lista</string>
+    <string name="drawer_calculate">Calcular</string>
+    <string name="best_choice_alcohol">Álcool é a melhor escolha!\n</string>
+    <string name="best_choice_gasoline">Gasolina é a melhor escolha!</string>
+    <string name="insert_valid_values">Por favor, insira valores válidos.</string>
+    <string name="gas_pump_description">Bomba de Gasolina</string>
+    <string name="alcohol_title_app">ÁLCOOL</string>
+    <string name="or_gasoline_title_app">ou gasolina</string>
+    <string name="gasoline_price">Preço da Gasolina</string>
+    <string name="enter_gasoline_price">Digite o preço da gasolina</string>
+    <string name="alcohol_price">Preço do Álcool</string>
+    <string name="enter_alcohol_price">Digite o preço do álcool</string>
+    <string name="performance_question">O rendimento de álcool do seu carro é de 75%?</string>
+    <string name="calculate_button">Calcular Melhor Opção</string>
+    <string name="drawer_add_station">Salvar Posto</string>
+    <string name="drawer_title">Álcool ou Gasolina</string>
+    <string name="calculate_name">Calcular</string>
+    <string name="gas_station_name">Nome do posto</string>
+    <string name="enter_station_name">Nome do posto (Opcional)</string>
+    <string name="save_station_button">Salvar posto</string>
+    <string name="list_name">Lista de postos</string>
 </resources>
