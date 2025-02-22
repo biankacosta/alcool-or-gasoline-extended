@@ -4,9 +4,12 @@ import androidx.compose.material3.Text
 import androidx.compose.ui.res.stringResource
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -42,6 +45,22 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 class MainActivity : ComponentActivity() {
+    private val requestPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+            if (isGranted) {
+                Log.d("Permissão", "Permissão concedida! Obtendo localização...")
+                PermissionManager.getCurrentLocation(this) { latitude, longitude ->
+                    if (latitude != null && longitude != null) {
+                        Log.d("Localização", "Latitude: $latitude, Longitude: $longitude")
+                    } else {
+                        Log.d("Localização", "Não foi possível obter a localização.")
+                    }
+                }
+            } else {
+                Log.d("Permissão", "Permissão negada!")
+            }
+        }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -52,7 +71,7 @@ class MainActivity : ComponentActivity() {
                 Surface (
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Main()
+                    Main(requestPermissionLauncher)
                 }
 
             }
@@ -63,7 +82,7 @@ class MainActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun Main(){
+fun Main(requestPermissionLauncher: ActivityResultLauncher<String>){
     val secondaryColor = MaterialTheme.colorScheme.secondary
     val tertiaryColor = MaterialTheme.colorScheme.tertiary
     val navController = rememberNavController()
@@ -138,7 +157,7 @@ fun Main(){
             Box(modifier = Modifier.padding(paddingValues)) { // 🔹 Aplica o padding no conteúdo
                 NavHost(navController = navController, startDestination = Screens.Calcular.screens) {
                     composable(Screens.List.screens) { List() }
-                    composable(Screens.Calcular.screens) { Calcular() }
+                    composable(Screens.Calcular.screens) { Calcular(requestPermissionLauncher = requestPermissionLauncher) }
                 }
             }
         }

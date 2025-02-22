@@ -23,12 +23,12 @@ fun generateUniqueId(context: Context): Int {
 }
 
 // Função para salvar um posto de gasolina
-fun addNewGasStation(context: Context, stationName: String?, gasolinePrice: String, alcoholPrice: String, consumption: Boolean) {
+fun addNewGasStation(context: Context, stationName: String?, gasolinePrice: String, alcoholPrice: String, consumption: Boolean, latitude: String?, longitude: String?) {
     // Gera um ID único para o novo posto
     val id = generateUniqueId(context)
 
     // Cria um novo objeto GasStationInfo com as informações fornecidas
-    val newStation = GasStationInfo(id, stationName, gasolinePrice, alcoholPrice, consumption)
+    val newStation = GasStationInfo(id, stationName, gasolinePrice, alcoholPrice, consumption, latitude, longitude)
 
     // Pega os postos existentes, adiciona o novo posto e os salva novamente
     val sharedPreferences = context.getSharedPreferences("GasStationPrefs", Context.MODE_PRIVATE)
@@ -44,7 +44,7 @@ fun addNewGasStation(context: Context, stationName: String?, gasolinePrice: Stri
     editor.putString("gas_stations", updatedJson)
     editor.apply()
 
-    Log.d("GasStations", "Posto salvo: $stationName, $gasolinePrice, $alcoholPrice, $consumption")
+    Log.d("GasStations", "Posto salvo: $stationName, $gasolinePrice, $alcoholPrice, $consumption, $latitude, $longitude")
 }
 
 @Composable
@@ -111,6 +111,6 @@ data class GasStationInfo(
     val gasolinePrice: String,
     val alcoholPrice: String,
     val consumption: Boolean,
-    val latitude: Double? = null,
-    val longitude: Double? = null
+    val latitude: String?,
+    val longitude: String?
 )

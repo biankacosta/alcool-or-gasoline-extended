@@ -21,4 +21,9 @@
     <string name="enter_station_name">Nome do posto (Opcional)</string>
     <string name="save_station_button">Salvar posto</string>
     <string name="list_name">Lista de postos</string>
+    <string name="unnamed_gas_station">Posto sem nome</string>
+    <string name="permission_message">Com a permissão de localização, conseguimos salvar o local do posto junto com as informações de valores. Deseja permitir acesso à localização ou salvar sem localização?</string>
+    <string name="permission_required_title">Permissão à localização</string>
+    <string name="allow_access">Permitir acesso</string>
+    <string name="deny_access">Negar acesso</string>
 </resources>

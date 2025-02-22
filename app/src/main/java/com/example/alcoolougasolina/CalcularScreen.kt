@@ -1,6 +1,7 @@
 package com.example.alcoolougasolina
 
 import android.content.Context
+import androidx.activity.result.ActivityResultLauncher
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -28,6 +29,7 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -46,6 +48,7 @@ import androidx.compose.ui.unit.sp
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.preferencesDataStore
+import com.example.alcoolougasolina.PermissionManager.checkLocationPermission
 import com.example.alcoolougasolina.ui.theme.LightGray
 import com.example.alcoolougasolina.ui.theme.LightGreen
 import com.example.alcoolougasolina.ui.theme.TruePink
@@ -60,8 +63,8 @@ val Context.dataStore by preferencesDataStore(name = "settings")
 val SWITCH_STATE_KEY = booleanPreferencesKey("switch_state")
 
 @Composable
-fun Calcular() {
-    Screen(context = LocalContext.current)
+fun Calcular(requestPermissionLauncher: ActivityResultLauncher<String>) {
+    Screen(context = LocalContext.current, requestPermissionLauncher = requestPermissionLauncher)
 }
 
 
@@ -113,19 +116,18 @@ fun ThemedImage() {
 
 
 @Composable
-fun Screen(modifier: Modifier = Modifier, context: Context? = null)
+fun Screen(modifier: Modifier = Modifier, context: Context? = null,
+           requestPermissionLauncher: ActivityResultLauncher<String>)
     {
     val secondaryColor = MaterialTheme.colorScheme.secondary
     val tertiaryColor = MaterialTheme.colorScheme.tertiary
-    val primaryContainerColor = MaterialTheme.colorScheme.primaryContainer
 
     var gasStationName by rememberSaveable { mutableStateOf("") }
     var gasolinePrice by rememberSaveable { mutableStateOf("") }
     var alcoholPrice by rememberSaveable { mutableStateOf("") }
     var checked by rememberSaveable { mutableStateOf(true) }
-    var resultado by rememberSaveable { mutableStateOf(0) }
+    var resultado by rememberSaveable { mutableIntStateOf(0) }
 
-        
 
     LaunchedEffect(Unit) {
         context?.let {
@@ -296,7 +298,9 @@ fun Screen(modifier: Modifier = Modifier, context: Context? = null)
                 Button(
                     onClick = {
                         if (context != null) {
-                            addNewGasStation(context, gasStationName, gasolinePrice, alcoholPrice, checked)
+                            checkLocationPermission(context, requestPermissionLauncher) { latitude, longitude ->
+                                addNewGasStation(context, gasStationName, gasolinePrice, alcoholPrice, checked, latitude, longitude)
+                            }
                         }
                     },
                     colors = ButtonDefaults.buttonColors(

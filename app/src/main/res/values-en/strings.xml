@@ -16,9 +16,15 @@
     <string name="performance_question">Is your car\'s alcohol performance 75%?</string>
     <string name="calculate_button">Calculate Best Option</string>
     <string name="drawer_add_station">Save Gas Station</string>
+    <string name="drawer_title">Álcool ou Gasolina</string>
     <string name="calculate_name">Calculate</string>
     <string name="gas_station_name">Gas Station Name</string>
     <string name="enter_station_name">(Optional)</string>
     <string name="save_station_button">Save Gas Station</string>
     <string name="list_name">Gas Station List</string>
+    <string name="unnamed_gas_station">Unnamed gas station</string>
+    <string name="permission_message">With location permission, we can save the location of the station along with the price information. Do you want to allow location access or save without location?</string>
+    <string name="permission_required_title">Location permission</string>
+    <string name="allow_access">Allow access</string>
+    <string name="deny_access">Deny access</string>
 </resources>
