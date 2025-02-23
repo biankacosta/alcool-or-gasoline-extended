@@ -1,6 +1,7 @@
 package com.example.alcoolougasolina
 
 import android.content.Context
+import android.util.Log
 import androidx.activity.result.ActivityResultLauncher
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -67,12 +68,11 @@ fun Calcular(requestPermissionLauncher: ActivityResultLauncher<String>) {
     Screen(context = LocalContext.current, requestPermissionLauncher = requestPermissionLauncher)
 }
 
-
 fun calculateBestChoice(gasolina: String, alcool: String, percentage: Double): Int {
     val gasolinaValor = gasolina.replace(",", ".").toDoubleOrNull()
     val alcoolValor = alcool.replace(",", ".").toDoubleOrNull()
 
-    return if (gasolinaValor != null && alcoolValor != null) {
+    return if (gasolinaValor!= null && alcoolValor!= null) {
         if (alcoolValor / gasolinaValor <= percentage) {
             R.string.best_choice_alcohol
         } else {
@@ -91,7 +91,7 @@ suspend fun saveSwitchState(context: Context, isChecked: Boolean) {
 
 suspend fun getSwitchState(context: Context): Boolean {
     return context.dataStore.data
-        .map { preferences -> preferences[SWITCH_STATE_KEY] ?: false }
+        .map { preferences -> preferences[SWITCH_STATE_KEY]?: false }
         .first()
 }
 
@@ -99,9 +99,9 @@ suspend fun getSwitchState(context: Context): Boolean {
 fun ThemedImage() {
     val isDarkTheme = isSystemInDarkTheme()
     val imageRes = if (isDarkTheme) {
-        R.drawable.bomba_de_combustivel_light // Imagem para tema escuro
+        R.drawable.bomba_de_combustivel_light
     } else {
-        R.drawable.bomba_de_combustivel_dark // Imagem para tema claro
+        R.drawable.bomba_de_combustivel_dark
     }
 
     Image(
@@ -114,11 +114,12 @@ fun ThemedImage() {
     )
 }
 
-
 @Composable
-fun Screen(modifier: Modifier = Modifier, context: Context? = null,
-           requestPermissionLauncher: ActivityResultLauncher<String>)
-    {
+fun Screen(
+    //modifier: Modifier = Modifier,
+    context: Context? = null,
+    requestPermissionLauncher: ActivityResultLauncher<String>
+) {
     val secondaryColor = MaterialTheme.colorScheme.secondary
     val tertiaryColor = MaterialTheme.colorScheme.tertiary
 
@@ -128,20 +129,24 @@ fun Screen(modifier: Modifier = Modifier, context: Context? = null,
     var checked by rememberSaveable { mutableStateOf(true) }
     var resultado by rememberSaveable { mutableIntStateOf(0) }
 
-
     LaunchedEffect(Unit) {
         context?.let {
             checked = getSwitchState(it)
         }
     }
 
-    Column (
-        modifier = Modifier.fillMaxWidth().fillMaxHeight().padding(top = 12.dp),
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight()
+            .padding(top = 12.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth().wrapContentHeight(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight(),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -150,11 +155,13 @@ fun Screen(modifier: Modifier = Modifier, context: Context? = null,
                 text = stringResource(id = R.string.calculate_name),
                 style = MaterialTheme.typography.titleLarge.copy(
                     brush = Brush.linearGradient(
-                        colors = listOf(MaterialTheme.colorScheme.secondaryContainer, MaterialTheme.colorScheme.tertiaryContainer)
+                        colors = listOf(
+                            MaterialTheme.colorScheme.secondaryContainer,
+                            MaterialTheme.colorScheme.tertiaryContainer
+                        )
                     )
                 )
             )
-
         }
         Column(
             modifier = Modifier
@@ -164,7 +171,7 @@ fun Screen(modifier: Modifier = Modifier, context: Context? = null,
                 .clip(RoundedCornerShape(16.dp))
                 .background(secondaryColor)
                 .padding(16.dp),
-             verticalArrangement = Arrangement.spacedBy(12.dp)
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
 
             Text(
@@ -176,7 +183,8 @@ fun Screen(modifier: Modifier = Modifier, context: Context? = null,
             TextField(
                 value = gasStationName,
                 onValueChange = { newText -> gasStationName = newText },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
                     .border(1.dp, tertiaryColor, RoundedCornerShape(8.dp)),
                 singleLine = true,
                 textStyle = TextStyle(color = MaterialTheme.colorScheme.primaryContainer),
@@ -203,11 +211,13 @@ fun Screen(modifier: Modifier = Modifier, context: Context? = null,
             TextField(
                 value = gasolinePrice,
                 onValueChange = { newText -> gasolinePrice = newText },
-                modifier = Modifier.fillMaxWidth().border(1.dp, tertiaryColor, RoundedCornerShape(8.dp)),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .border(1.dp, tertiaryColor, RoundedCornerShape(8.dp)),
                 singleLine = true,
                 textStyle = TextStyle(color = MaterialTheme.colorScheme.primaryContainer),
                 placeholder = {
-                    ProvideTextStyle(value = TextStyle(fontSize = 17.sp)){
+                    ProvideTextStyle(value = TextStyle(fontSize = 17.sp)) {
                         Text(
                             text = stringResource(id = R.string.enter_gasoline_price),
                             color = Color(android.graphics.Color.parseColor("#696374"))
@@ -229,7 +239,9 @@ fun Screen(modifier: Modifier = Modifier, context: Context? = null,
             TextField(
                 value = alcoholPrice,
                 onValueChange = { newText -> alcoholPrice = newText },
-                modifier = Modifier.fillMaxWidth().border(1.dp, tertiaryColor, RoundedCornerShape(8.dp)),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .border(1.dp, tertiaryColor, RoundedCornerShape(8.dp)),
                 singleLine = true,
                 textStyle = TextStyle(color = MaterialTheme.colorScheme.primaryContainer),
                 placeholder = {
@@ -247,7 +259,9 @@ fun Screen(modifier: Modifier = Modifier, context: Context? = null,
             )
 
             Row(
-                modifier = Modifier.fillMaxWidth().wrapContentHeight(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -263,7 +277,7 @@ fun Screen(modifier: Modifier = Modifier, context: Context? = null,
                     onCheckedChange = { newChecked ->
                         checked = newChecked
                         CoroutineScope(Dispatchers.IO).launch {
-                            if (context != null) {
+                            if (context!= null) {
                                 saveSwitchState(context, newChecked)
                             }
                         }
@@ -278,14 +292,16 @@ fun Screen(modifier: Modifier = Modifier, context: Context? = null,
             }
 
             Column(
-                modifier = Modifier.fillMaxWidth().fillMaxHeight(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(1.dp)
             ) {
                 Button(
                     onClick = {
                         val percentage = if (checked) 0.75 else 0.70
-                        resultado = calculateBestChoice(gasolinePrice, alcoholPrice, percentage) // Agora retorna um ID de recurso (Int)
+                        resultado = calculateBestChoice(gasolinePrice, alcoholPrice, percentage)
                     },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.primaryContainer,
@@ -297,9 +313,25 @@ fun Screen(modifier: Modifier = Modifier, context: Context? = null,
 
                 Button(
                     onClick = {
-                        if (context != null) {
-                            checkLocationPermission(context, requestPermissionLauncher) { latitude, longitude ->
-                                addNewGasStation(context, gasStationName, gasolinePrice, alcoholPrice, checked, latitude, longitude)
+                        if (context!= null) {
+                            val gasolinePriceFloat = gasolinePrice.replace(",", ".").toFloatOrNull()
+                            val alcoholPriceFloat = alcoholPrice.replace(",", ".").toFloatOrNull()
+
+                            if (gasolinePriceFloat!= null && alcoholPriceFloat!= null) {
+                                checkLocationPermission(context, requestPermissionLauncher) { latitude, longitude ->
+                                    addNewGasStation(
+                                        context,
+                                        gasStationName,
+                                        gasolinePriceFloat, // Passando o valor como Float
+                                        alcoholPriceFloat, // Passando o valor como Float
+                                        checked,
+                                        latitude,
+                                        longitude
+                                    )
+                                }
+                            } else {
+                                // Lidar com erro de conversão (exibir mensagem, etc.)
+                                Log.e("Conversão", "Erro ao converter preços para Float")
                             }
                         }
                     },
@@ -312,9 +344,10 @@ fun Screen(modifier: Modifier = Modifier, context: Context? = null,
                 }
 
                 Spacer(modifier = Modifier.width(16.dp))
-                if (resultado != 0) {
+
+                if (resultado!= 0) {
                     Text(
-                        text = stringResource(id = resultado),
+                        text = stringResource(id = resultado), // Corrigido para usar stringResource
                         style = MaterialTheme.typography.bodyLarge,
                         fontFamily = patuaFont,
                         color = TruePink,
@@ -322,7 +355,6 @@ fun Screen(modifier: Modifier = Modifier, context: Context? = null,
                     )
                 }
             }
-
         }
     }
 }

@@ -27,4 +27,21 @@
     <string name="permission_required_title">Location permission</string>
     <string name="allow_access">Allow access</string>
     <string name="deny_access">Deny access</string>
+    <string name="back">Back</string>
+    <string name="edit">Edit</string>
+    <string name="close_map">Close Map</string>
+    <string name="open_map">Open Map</string>
+    <string name="voltar">Back</string>
+    <string name="editar">Edit</string>
+    <string name="salvar">Save</string>
+    <string name="station_name">Station Name</string>
+    <string name="excluir">Delete</string>
+    <string name="details">Details</string>
+    <string name="no_stations">No gas stations registered yet</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="registration_date">Registered in</string>
+    <string name="map_closed">Map Closed</string>
+    <string name="location_not_available">Location not Available</string>
+    <string name="station_not_found">Gas Station Not Found</string>
 </resources>

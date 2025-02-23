@@ -26,4 +26,21 @@
     <string name="permission_required_title">Permissão à localização</string>
     <string name="allow_access">Permitir acesso</string>
     <string name="deny_access">Negar acesso</string>
+    <string name="back">Voltar</string>
+    <string name="edit">Editar</string>
+    <string name="close_map">Fechar Mapa</string>
+    <string name="open_map">Abrir Mapa</string>
+    <string name="voltar">Voltar</string>
+    <string name="editar">Editar</string>
+    <string name="salvar">Salvar</string>
+    <string name="station_name">Nome do Posto</string>
+    <string name="excluir">Excluir</string>
+    <string name="details">Detalhes</string>
+    <string name="no_stations">Nenhum posto cadastrado ainda.</string>
+    <string name="yes">Sim</string>
+    <string name="no">Não</string>
+    <string name="registration_date">Registrado em</string>
+    <string name="map_closed">Mapa fechado</string>
+    <string name="location_not_available">Localização não disponível</string>
+    <string name="station_not_found">Posto não encontrado</string>
 </resources>
