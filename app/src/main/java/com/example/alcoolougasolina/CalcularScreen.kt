@@ -317,7 +317,10 @@ fun Screen(
                             val gasolinePriceFloat = gasolinePrice.replace(",", ".").toFloatOrNull()
                             val alcoholPriceFloat = alcoholPrice.replace(",", ".").toFloatOrNull()
 
-                            if (gasolinePriceFloat!= null && alcoholPriceFloat!= null) {
+                            if (gasolinePriceFloat == null || alcoholPriceFloat == null) {
+                                resultado = R.string.insert_valid_values
+                            }
+                            else {
                                 checkLocationPermission(context, requestPermissionLauncher) { latitude, longitude ->
                                     addNewGasStation(
                                         context,
@@ -329,9 +332,6 @@ fun Screen(
                                         longitude
                                     )
                                 }
-                            } else {
-                                // Lidar com erro de conversão (exibir mensagem, etc.)
-                                Log.e("Conversão", "Erro ao converter preços para Float")
                             }
                         }
                     },
@@ -347,7 +347,7 @@ fun Screen(
 
                 if (resultado!= 0) {
                     Text(
-                        text = stringResource(id = resultado), // Corrigido para usar stringResource
+                        text = stringResource(id = resultado),
                         style = MaterialTheme.typography.bodyLarge,
                         fontFamily = patuaFont,
                         color = TruePink,

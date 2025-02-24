@@ -66,14 +66,14 @@ fun ListScreen(navController: NavHostController) {
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(8.dp)
+                                .padding(12.dp)
                                 .clip(RoundedCornerShape(16.dp))
                                 .background(MaterialTheme.colorScheme.secondary)
                                 .padding(16.dp)
                         ) {
                             Column {
                                 Text(
-                                    text = "${stringResource(R.string.station_name)}: ${station.stationName ?: stringResource(R.string.unnamed_gas_station)}",
+                                    text = "${stringResource(R.string.station_name)}: ${station.stationName?.takeIf { it.isNotEmpty() } ?: stringResource(R.string.unnamed_gas_station)}",
                                     style = MaterialTheme.typography.bodyLarge
                                 )
                                 Text(
@@ -85,9 +85,11 @@ fun ListScreen(navController: NavHostController) {
                                     style = MaterialTheme.typography.bodyMedium
                                 )
                                 Text(
-                                    text = "${stringResource(R.string.performance_question)}: ${if (station.consumption) stringResource(R.string.yes) else stringResource(R.string.no)}",
+                                    text = "${stringResource(R.string.performance_question)} ${if (station.consumption) stringResource(R.string.yes) else stringResource(R.string.no)}",
                                     style = MaterialTheme.typography.bodyMedium
                                 )
+
+                                Spacer(modifier = Modifier.height(7.dp))
 
                                 Row(
                                     modifier = Modifier.fillMaxWidth(),

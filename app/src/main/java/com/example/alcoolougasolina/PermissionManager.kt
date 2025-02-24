@@ -35,12 +35,11 @@ object PermissionManager {
 
             activity?.shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION) == true -> {
                 showPermissionRationaleDialog(context, requestPermissionLauncher)
-                onLocationReceived(null, "Permissão necessária")
             }
 
             else -> {
                 requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
-                onLocationReceived(null, "Permissão solicitada")
+                //onLocationReceived(latitude, longitude)
             }
         }
     }
@@ -72,12 +71,12 @@ object PermissionManager {
                     callback(location.latitude.toString(), location.longitude.toString())
                 } else {
                     Log.d("Localização", "Localização não encontrada")
-                    callback(null, "Localização não encontrada")
+                    callback(null, null)
                 }
             }
             .addOnFailureListener { e ->
                 Log.e("Localização", "Erro ao obter localização: ${e.message}", e)
-                callback(null, "Erro ao obter localização: ${e.message}")
+                callback(null, null)
             }
     }
 }

@@ -25,20 +25,22 @@ fun DetailsScreen(navController: NavHostController, stationId: String) {
     if (station != null) {
         Scaffold(
             topBar = {
-                TopAppBar(title = { Text(stringResource(R.string.details)) }) // Agora usa a string traduzida
+                TopAppBar(title = { Text(stringResource(R.string.details),
+                    modifier = Modifier.padding(start = 5.dp)) })
             }
         ) { innerPadding ->
             Column(
                 modifier = Modifier
                     .padding(innerPadding)
-                    .padding(16.dp)
+                    .padding(20.dp)
+                    .padding(bottom = 18.dp)
             ) {
-                Text(text = "${stringResource(R.string.station_name)}: ${station.stationName ?: stringResource(R.string.unnamed_gas_station)}")
+                Text(text = "${stringResource(R.string.station_name)}: ${station.stationName?.takeIf { it.isNotEmpty() } ?: stringResource(R.string.unnamed_gas_station)}")
                 Text(text = "${stringResource(R.string.gasoline_price)}: R$ ${station.gasolinePrice}")
                 Text(text = "${stringResource(R.string.alcohol_price)}: R$ ${station.alcoholPrice}")
                 Text(text = "${stringResource(R.string.registration_date)}: ${station.registrationDate}")
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(10.dp))
 
                 // Botão para abrir/fechar o mapa
                 Button(onClick = { showMap = !showMap }) {
@@ -51,6 +53,7 @@ fun DetailsScreen(navController: NavHostController, stationId: String) {
                     Spacer(modifier = Modifier.height(16.dp))
                     MapViewComponent(location)
                 } else if (!showMap) {
+                    Spacer(modifier = Modifier.height(10.dp))
                     Text(text = stringResource(R.string.map_closed))
                 } else {
                     Text(text = stringResource(R.string.location_not_available))
