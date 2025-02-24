@@ -1,116 +1,127 @@
 package com.example.alcoolougasolina
 
 import android.content.Context
-import android.content.SharedPreferences
 import android.util.Log
-import androidx.compose.runtime.Composable
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import java.text.SimpleDateFormat
+import java.util.*
 
 val gson = Gson()
 
-//Função para gerar IDs únicos
-fun generateUniqueId(context: Context): Int {
-    val sharedPreferences = context.getSharedPreferences("gasStations", Context.MODE_PRIVATE)
-    val gasStationsJson = sharedPreferences.getString("gasStationsList", "[]")
-    val gasStationsList = gson.fromJson(gasStationsJson, Array<GasStationInfo>::class.java).toList()
-
-    return if (gasStationsList.isEmpty()) {
-        1
-    } else {
-        gasStationsList.maxOf { it.id } + 1 // Incrementa o maior ID encontrado
-    }
-}
+// Função para gerar UUIDs únicos
+fun generateUniqueId(): String = UUID.randomUUID().toString()
 
 // Função para salvar um posto de gasolina
-fun addNewGasStation(context: Context, stationName: String?, gasolinePrice: String, alcoholPrice: String, consumption: Boolean, latitude: String?, longitude: String?) {
-    // Gera um ID único para o novo posto
-    val id = generateUniqueId(context)
+fun addNewGasStation(
+    context: Context,
+    stationName: String?,
+    gasolinePrice: Float,
+    alcoholPrice: Float,
+    consumption: Boolean,
+    latitude: String?,
+    longitude: String?
+) {
+    val sharedPreferences = context.getSharedPreferences("gas_stations", Context.MODE_PRIVATE)
+    val json = sharedPreferences.getString("gas_stations", "[]") ?: "[]"
 
-    // Cria um novo objeto GasStationInfo com as informações fornecidas
-    val newStation = GasStationInfo(id, stationName, gasolinePrice, alcoholPrice, consumption, latitude, longitude)
+    val type = object : TypeToken<List<GasStationInfo>>() {}.type
+    val gasStationsList: MutableList<GasStationInfo> = gson.fromJson(json, type)
 
-    // Pega os postos existentes, adiciona o novo posto e os salva novamente
-    val sharedPreferences = context.getSharedPreferences("GasStationPrefs", Context.MODE_PRIVATE)
-    val gasStationsJson = sharedPreferences.getString("gas_stations", "[]")
-    val gasStationsList = gson.fromJson(gasStationsJson, Array<GasStationInfo>::class.java).toMutableList()
+    val newStation = GasStationInfo(
+        id = generateUniqueId(),
+        stationName = stationName,
+        gasolinePrice = gasolinePrice,
+        alcoholPrice = alcoholPrice,
+        consumption = consumption,
+        latitude = latitude,
+        longitude = longitude,
+        registrationDate = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date()) // Data atual
+    )
 
-    // Adiciona o novo posto à lista
     gasStationsList.add(newStation)
 
-    // Salva novamente a lista atualizada
     val updatedJson = gson.toJson(gasStationsList)
-    val editor = sharedPreferences.edit()
-    editor.putString("gas_stations", updatedJson)
-    editor.apply()
+    sharedPreferences.edit().putString("gas_stations", updatedJson).apply()
 
-    Log.d("GasStations", "Posto salvo: $stationName, $gasolinePrice, $alcoholPrice, $consumption, $latitude, $longitude")
+    Log.d("GasStations", "Posto adicionado: $newStation")
 }
 
-@Composable
 // Função para recuperar a lista de postos de gasolina
 fun getGasStations(context: Context): List<GasStationInfo> {
-    val sharedPreferences: SharedPreferences = context.getSharedPreferences("GasStationPrefs", Context.MODE_PRIVATE)
-    val gson = Gson()
-    val json = sharedPreferences.getString("gas_stations", "[]") // Retorna uma string vazia se não houver dados
+    val sharedPreferences = context.getSharedPreferences("gas_stations", Context.MODE_PRIVATE)
+    val json = sharedPreferences.getString("gas_stations", "[]") ?: "[]"
 
-    // Verificando se o json retornado é válido
-    if (json == null || json.isEmpty()) {
-        Log.d("GasStations", "Nenhum posto encontrado no SharedPreferences.")
-        return emptyList()  // Retorna uma lista vazia caso o json esteja vazio ou inválido
-    }
+    val type = object : TypeToken<List<GasStationInfo>>() {}.type
+    val stations: List<GasStationInfo> = gson.fromJson(json, type)
 
-    val type = object : TypeToken<List<GasStationInfo>>() {}.type // Definindo corretamente o tipo
-    val stations = gson.fromJson<List<GasStationInfo>>(json, type)  // Explicitamente informando o tipo
-
-    // Log para verificar o conteúdo da lista
     Log.d("GasStations", "Postos carregados: $stations")
-
-    return stations // Converte o JSON de volta para uma lista de objetos
+    return stations
 }
 
 // Função para buscar um posto pelo ID
-@Composable
-fun getGasStationById(context: Context, stationId: Int): GasStationInfo? {
+fun getGasStationById(context: Context, stationId: String): GasStationInfo? {
     val gasStations = getGasStations(context)
     return gasStations.find { it.id == stationId }
 }
 
-@Composable
-fun updateGasStation(context: Context, stationId: Int, newStationName: String?, newGasolinePrice: String, newAlcoholPrice: String, newConsumption: Boolean) {
-    val sharedPreferences = context.getSharedPreferences("gasStations", Context.MODE_PRIVATE)
-    val gasStationsJson = sharedPreferences.getString("gasStationsList", "[]")
-    val gasStationsList = gson.fromJson(gasStationsJson, Array<GasStationInfo>::class.java).toMutableList()
+// Função para atualizar um posto de gasolina
+fun updateGasStation(
+    context: Context,
+    stationId: String,
+    newStationName: String?,
+    newGasolinePrice: Float,
+    newAlcoholPrice: Float,
+    newConsumption: Boolean
+) {
+    val sharedPreferences = context.getSharedPreferences("gas_stations", Context.MODE_PRIVATE)
+    val json = sharedPreferences.getString("gas_stations", "[]") ?: "[]"
 
-    // Encontrar o posto com o ID fornecido
-    val gasStation = getGasStationById(context, stationId = stationId)
+    val type = object : TypeToken<List<GasStationInfo>>() {}.type
+    val gasStationsList: MutableList<GasStationInfo> = gson.fromJson(json, type)
 
-    if (gasStation != null) {
-        // Atualiza os dados do posto
-        val updatedStation = gasStation.copy(
+    val index = gasStationsList.indexOfFirst { it.id == stationId }
+
+    if (index != -1) {
+        val updatedStation = gasStationsList[index].copy(
             stationName = newStationName,
             gasolinePrice = newGasolinePrice,
             alcoholPrice = newAlcoholPrice,
             consumption = newConsumption
         )
 
-        // Substituir o posto atualizado na lista
-        val index = gasStationsList.indexOf(gasStation)
         gasStationsList[index] = updatedStation
 
-        // Salvar a lista atualizada de postos
         val updatedJson = gson.toJson(gasStationsList)
-        sharedPreferences.edit().putString("gasStationsList", updatedJson).apply()
+        sharedPreferences.edit().putString("gas_stations", updatedJson).apply()
     }
 }
 
+// Função para excluir um posto de gasolina
+fun deleteGasStation(context: Context, stationId: String) {
+    val sharedPreferences = context.getSharedPreferences("gas_stations", Context.MODE_PRIVATE)
+    val json = sharedPreferences.getString("gas_stations", "[]") ?: "[]"
+
+    val type = object : TypeToken<List<GasStationInfo>>() {}.type
+    val gasStationsList: MutableList<GasStationInfo> = gson.fromJson(json, type)
+
+    val updatedList = gasStationsList.filter { it.id != stationId }
+
+    val updatedJson = gson.toJson(updatedList)
+    sharedPreferences.edit().putString("gas_stations", updatedJson).apply()
+
+    Log.d("GasStations", "Posto removido: $stationId")
+}
+
+
 // Data class para armazenar as informações
 data class GasStationInfo(
-    val id: Int,  // ID único para cada posto
+    val id: String,
     val stationName: String?,
-    val gasolinePrice: String,
-    val alcoholPrice: String,
+    val gasolinePrice: Number,
+    val alcoholPrice: Number,
     val consumption: Boolean,
     val latitude: String?,
-    val longitude: String?
+    val longitude: String?,
+    val registrationDate: String // Data de cadastro
 )

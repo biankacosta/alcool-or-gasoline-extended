@@ -1,102 +1,124 @@
 package com.example.alcoolougasolina
 
-import android.util.Log
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 
 @Composable
-fun List() {
+fun ListScreen(navController: NavHostController) {
     val context = LocalContext.current
-    val secondaryColor = MaterialTheme.colorScheme.secondary
-    val tertiaryColor = MaterialTheme.colorScheme.tertiary
+    var stations by remember { mutableStateOf(getGasStations(context)) }
+
     Box(modifier = Modifier.fillMaxSize()) {
-        Column(modifier = Modifier.fillMaxSize().align(Alignment.Center),
-            verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.Top,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             Row(
-                modifier = Modifier.fillMaxWidth().fillMaxHeight(0.14f),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(0.14f),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.Bottom
             ) {
                 ThemedImage()
                 Text(
-                    text = stringResource(id = R.string.list_name),
+                    text = stringResource(id = R.string.list_name), // Lista de postos
                     modifier = Modifier.padding(7.dp),
                     style = MaterialTheme.typography.titleLarge.copy(
                         brush = Brush.linearGradient(
-                            colors = listOf(MaterialTheme.colorScheme.secondaryContainer, MaterialTheme.colorScheme.tertiaryContainer)
+                            colors = listOf(
+                                MaterialTheme.colorScheme.secondaryContainer,
+                                MaterialTheme.colorScheme.tertiaryContainer
+                            )
                         )
                     )
                 )
-
             }
-            val stations = getGasStations(context)
 
-            Column (
-                modifier = Modifier
-                    .fillMaxWidth(0.9f)
-                    .wrapContentHeight()
-                    .padding(7.dp)
-                    .clip(RoundedCornerShape(16.dp))
-                    .background(secondaryColor)
-                    .padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
+            Spacer(modifier = Modifier.height(16.dp))
+
+            if (stations.isEmpty()) {
                 Text(
-                    text = "Nome do posto",
+                    text = stringResource(R.string.no_stations), // Nenhum posto cadastrado ainda.
                     style = MaterialTheme.typography.bodyLarge,
-                    color = tertiaryColor
+                    color = MaterialTheme.colorScheme.error
                 )
-                Text(
-                    text = "Localização: coordenadas aqui",
-                    style = MaterialTheme.typography.labelSmall,
-                    fontSize = 15.sp,
-                    color = Color.Gray
-                )
-            }
+            } else {
+                LazyColumn(modifier = Modifier.fillMaxWidth()) {
+                    items(stations) { station ->
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(12.dp)
+                                .clip(RoundedCornerShape(16.dp))
+                                .background(MaterialTheme.colorScheme.secondary)
+                                .padding(16.dp)
+                        ) {
+                            Column {
+                                Text(
+                                    text = "${stringResource(R.string.station_name)}: ${station.stationName?.takeIf { it.isNotEmpty() } ?: stringResource(R.string.unnamed_gas_station)}",
+                                    style = MaterialTheme.typography.bodyLarge
+                                )
+                                Text(
+                                    text = "${stringResource(R.string.gasoline_price)}: R$ ${station.gasolinePrice}",
+                                    style = MaterialTheme.typography.bodyMedium
+                                )
+                                Text(
+                                    text = "${stringResource(R.string.alcohol_price)}: R$ ${station.alcoholPrice}",
+                                    style = MaterialTheme.typography.bodyMedium
+                                )
+                                Text(
+                                    text = "${stringResource(R.string.performance_question)} ${if (station.consumption) stringResource(R.string.yes) else stringResource(R.string.no)}",
+                                    style = MaterialTheme.typography.bodyMedium
+                                )
 
-            // Mostrando no Log os postos para debug
-            Log.d("GasStations", "Lista de postos: $stations")
+                                Spacer(modifier = Modifier.height(7.dp))
 
-            // Exibindo os postos em uma LazyColumn (ou Column, caso prefira)
-            LazyColumn(
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                items(stations) { station ->
-                    // Aqui, você pode exibir informações de cada posto, como nome e preço
-                    Text(
-                        text = "Nome do posto: ${station.stationName}, Localização: ${station.latitude}, ${station.longitude}",
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    Button(onClick = { navController.navigate("details/${station.id}") }) {
+                                        Text(stringResource(R.string.details)) // Detalhes
+                                    }
+                                    Button(
+                                        onClick = {
+                                            stations = stations.filter { it.id != station.id }
+                                            deleteGasStation(context, station.id)
+                                        },
+                                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
+                                    ) {
+                                        Text(stringResource(R.string.excluir)) // Excluir
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
-
     }
 }
 
+@Composable
+fun ListScreen() {
+    val navController = rememberNavController()
+    ListScreen(navController)
+}

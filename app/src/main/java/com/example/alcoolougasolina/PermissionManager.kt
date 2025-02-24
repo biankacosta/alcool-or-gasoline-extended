@@ -8,7 +8,6 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.util.Log
 import androidx.activity.result.ActivityResultLauncher
-import androidx.compose.ui.res.stringResource
 import androidx.core.content.ContextCompat
 import com.google.android.gms.location.LocationServices
 
@@ -19,36 +18,28 @@ object PermissionManager {
         requestPermissionLauncher: ActivityResultLauncher<String>,
         onLocationReceived: (String?, String?) -> Unit
     ) {
-        // Verificando se o contexto é uma instância de Activity
         val activity = context as? Activity
 
         when {
             ContextCompat.checkSelfPermission(
-                context ?: return, // Se o contexto for nulo, retorna
+                context ?: return,
                 Manifest.permission.ACCESS_FINE_LOCATION
             ) == PackageManager.PERMISSION_GRANTED -> {
                 Log.d("Permissão", "Permissão já concedida! Obtendo localização...")
                 if (activity != null) {
                     getCurrentLocation(activity) { latitude, longitude ->
-                        onLocationReceived(latitude, longitude) // Retorna as coordenadas
+                        onLocationReceived(latitude, longitude)
                     }
                 }
             }
 
             activity?.shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION) == true -> {
                 showPermissionRationaleDialog(context, requestPermissionLauncher)
-                getCurrentLocation(activity) { latitude, longitude ->
-                    onLocationReceived(null, null) // Retorna as coordenadas
-                }
             }
 
             else -> {
                 requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
-                if (activity != null) {
-                    getCurrentLocation(activity) { latitude, longitude ->
-                        onLocationReceived(null, null) // Retorna as coordenadas
-                    }
-                }
+                //onLocationReceived(latitude, longitude)
             }
         }
     }
@@ -77,14 +68,14 @@ object PermissionManager {
             .addOnSuccessListener { location ->
                 if (location != null) {
                     Log.d("Localização", "Latitude: ${location.latitude}, Longitude: ${location.longitude}")
-                    callback(location.latitude.toString(), location.latitude.toString())
+                    callback(location.latitude.toString(), location.longitude.toString())
                 } else {
                     Log.d("Localização", "Localização não encontrada")
                     callback(null, null)
                 }
             }
-            .addOnFailureListener {
-                Log.e("Localização", "Erro ao obter localização", it)
+            .addOnFailureListener { e ->
+                Log.e("Localização", "Erro ao obter localização: ${e.message}", e)
                 callback(null, null)
             }
     }
